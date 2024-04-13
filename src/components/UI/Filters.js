@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { Checkbox, ConfigProvider } from 'antd'
+import './Filter.scss'
+
 const CheckboxGroup = Checkbox.Group
 const flightOptions = ['Без пересадок', '1 пересадка', '2 пересадки', '3 пересадки']
 const defaultCheckedList = ['Без пересадок']
@@ -17,24 +19,14 @@ const Filters = () => {
     <ConfigProvider
       theme={{
         token: {
-          controlInteractiveSize: 30,
+          controlInteractiveSize: 22,
         },
       }}
     >
-      <Checkbox
-        style={{ paddingBottom: '2em' }}
-        indeterminate={indeterminate}
-        onChange={onCheckAllChange}
-        checked={checkAll}
-      >
+      <Checkbox className="check-box" indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
         Все
       </Checkbox>
-      <CheckboxGroup
-        style={{ flexDirection: 'column', gap: '1.5em' }}
-        options={flightOptions}
-        value={checkedList}
-        onChange={onChange}
-      />
+      <CheckboxGroup className="check-box-group" options={flightOptions} value={checkedList} onChange={onChange} />
     </ConfigProvider>
   )
 }
