@@ -1,63 +1,55 @@
-import React from 'react'
-import { Layout, Flex, Segmented, ConfigProvider, Button } from 'antd'
+import React, { useEffect } from 'react'
+import { connect } from 'react-redux'
+import { Layout, Flex, Button } from 'antd'
 
+import TicketService from '../../services/TicketService'
 import logo from '../../img/logo.svg'
-
-import Filters from './Filters'
-import CardDesign from './CardDesign'
+import { setTickets } from '../../store/action'
 import './Wrapper.scss'
+import Sort from '../Sort/Sort'
+import Tickets from '../Tickets/Tickets'
 
-const { Sider, Content } = Layout
+import SiderDesign from './SiderDesign'
 
-const Wrapper = () => (
-  <ConfigProvider
-    theme={{
-      components: {
-        Segmented: {
-          trackBg: 'white',
-          itemActiveBg: 'rgba(33, 150, 243, 1)',
-          itemHoverBg: '#f5f5f5',
-          itemColor: 'black',
-          itemHoverColor: 'black',
-          itemSelectedBg: 'rgba(33, 150, 243, 1)',
-          itemSelectedColor: 'white',
-          controlHeightLG: 70,
-          fontSizeLG: 14,
-        },
-      },
-    }}
-  >
-    <div className="logo">
-      <img src={logo} />
-    </div>
-    <Flex className="wrapper" gap="middle" wrap="wrap">
-      <Layout className="layout" hasSider>
-        <Sider className="sider" width="30%">
-          <div className="sider__content">
-            <p>КОЛИЧЕСТВО ПЕРЕСАДОК</p>
-            <Filters />
-          </div>
-        </Sider>
-        <Layout style={{ width: 'auto' }}>
-          <Segmented
-            className="segmented"
-            size="large"
-            options={['CАМЫЙ ДЕШЁВЫЙ', 'САМЫЙ БЫСТРЫЙ', 'ОПТИМАЛЬНЫЙ']}
-            block
-          />
-          <Content className="content">
-            <CardDesign />
-          </Content>
-          <Content className="content">Content</Content>
-          <Content className="content">Content</Content>
+const ticketService = new TicketService()
 
-          <Button className="button" size="large" type="primary">
-            ПОКАЗАТЬ ЕЩЁ 5 БИЛЕТОВ!
-          </Button>
+const Wrapper = ({ setTicketsAction }) => {
+  const getTickets = async () => {
+    const res = await ticketService.getTickets()
+    setTicketsAction(res?.tickets.slice(0, 100))
+  }
+
+  useEffect(() => {
+    getTickets()
+  }, [])
+
+  return (
+    <>
+      <div className="logo">
+        <img src={logo} />
+      </div>
+      <Flex className="wrapper" gap="middle" wrap="wrap">
+        <Layout className="layout" hasSider>
+          <SiderDesign />
+          <Layout style={{ width: 'auto' }}>
+            <Sort />
+            <Tickets />
+            <Button className="button" size="large" type="primary">
+              ПОКАЗАТЬ ЕЩЁ 5 БИЛЕТОВ!
+            </Button>
+          </Layout>
         </Layout>
-      </Layout>
-    </Flex>
-  </ConfigProvider>
-)
+      </Flex>
+    </>
+  )
+}
 
-export default Wrapper
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setTicketsAction: (value) => {
+      dispatch(setTickets(value))
+    },
+  }
+}
+
+export default connect(null, mapDispatchToProps)(Wrapper)
