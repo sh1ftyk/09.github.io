@@ -2,41 +2,20 @@ import React from 'react'
 import { Segmented } from 'antd'
 import { connect } from 'react-redux'
 
-import { setFastest, setCheapest, setOptimal } from '../../store/action'
-import { tabName } from '../../store/reducer'
+import { setTab } from '../../store/action'
+import { tabNames } from '../../store/reducer'
 
-const Sort = ({ setCheapestAction, setFastestAction, setOptimalAction }) => {
-  return (
-    <Segmented
-      className="segmented"
-      size="large"
-      options={tabName}
-      onChange={(value) => {
-        if (value === 'CАМЫЙ ДЕШЁВЫЙ') {
-          setCheapestAction(value)
-        }
-        if (value === 'САМЫЙ БЫСТРЫЙ') {
-          setFastestAction(value)
-        }
-        if (value === 'ОПТИМАЛЬНЫЙ') {
-          setOptimalAction(value)
-        }
-      }}
-      block
-    />
-  )
+const Sort = ({ setTabAction }) => {
+  const changeTab = (value) => {
+    setTabAction(value)
+  }
+  return <Segmented className="segmented" size="large" options={tabNames} onChange={changeTab} block />
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setFastestAction: (value) => {
-      dispatch(setFastest(value))
-    },
-    setCheapestAction: (value) => {
-      dispatch(setCheapest(value))
-    },
-    setOptimalAction: (value) => {
-      dispatch(setOptimal(value))
+    setTabAction: (value) => {
+      dispatch(setTab(value))
     },
   }
 }

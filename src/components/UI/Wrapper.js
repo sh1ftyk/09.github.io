@@ -4,19 +4,22 @@ import { Layout, Flex, Button } from 'antd'
 
 import TicketService from '../../services/TicketService'
 import logo from '../../img/logo.svg'
-import { setTickets } from '../../store/action'
+import { setTickets, setLoading } from '../../store/action'
 import './Wrapper.scss'
 import Sort from '../Sort/Sort'
 import Tickets from '../Tickets/Tickets'
 
 import SiderDesign from './SiderDesign'
+import Loading from './Loading'
 
 const ticketService = new TicketService()
 
-const Wrapper = ({ setTicketsAction }) => {
+const Wrapper = ({ setTicketsAction, setLoadingAction, loading }) => {
   const getTickets = async () => {
+    setLoadingAction(true)
     const res = await ticketService.getTickets()
-    setTicketsAction(res?.tickets.slice(0, 100))
+    setLoadingAction(false)
+    setTicketsAction(res?.tickets.slice(0, 50))
   }
 
   useEffect(() => {
@@ -33,10 +36,13 @@ const Wrapper = ({ setTicketsAction }) => {
           <SiderDesign />
           <Layout style={{ width: 'auto' }}>
             <Sort />
+            {loading && <Loading />}
             <Tickets />
-            <Button className="button" size="large" type="primary">
-              ПОКАЗАТЬ ЕЩЁ 5 БИЛЕТОВ!
-            </Button>
+            {!loading && (
+              <Button className="button" size="large" type="primary">
+                ПОКАЗАТЬ ЕЩЁ 5 БИЛЕТОВ!
+              </Button>
+            )}
           </Layout>
         </Layout>
       </Flex>
@@ -44,12 +50,19 @@ const Wrapper = ({ setTicketsAction }) => {
   )
 }
 
+const mapStateToProps = (state) => {
+  return { loading: state.loadingReducer }
+}
+
 const mapDispatchToProps = (dispatch) => {
   return {
     setTicketsAction: (value) => {
       dispatch(setTickets(value))
     },
+    setLoadingAction: (value) => {
+      dispatch(setLoading(value))
+    },
   }
 }
 
-export default connect(null, mapDispatchToProps)(Wrapper)
+export default connect(mapStateToProps, mapDispatchToProps)(Wrapper)

@@ -13,18 +13,24 @@ const Filters = ({ setCheckAllAction, setCheckOneAction, actionFilter }) => {
   const checkAll = flightOptions.length === actionFilter.length
   const indeterminate = actionFilter.length > 0 && actionFilter.length < flightOptions.length
 
-  const onChange = (value) => {
+  const filtersChange = (value) => {
+    console.log(value)
     setCheckOneAction(value)
   }
-  const onCheckAllChange = (e) => {
+  const checkAllFilters = (e) => {
     setCheckAllAction(e.target.checked ? flightOptions : [])
   }
   return (
     <>
-      <Checkbox className="check-box" indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
+      <Checkbox className="check-box" indeterminate={indeterminate} onChange={checkAllFilters} checked={checkAll}>
         Все
       </Checkbox>
-      <CheckboxGroup className="check-box-group" options={flightOptions} value={actionFilter} onChange={onChange} />
+      <CheckboxGroup
+        className="check-box-group"
+        options={flightOptions}
+        value={actionFilter}
+        onChange={filtersChange}
+      />
     </>
   )
 }
