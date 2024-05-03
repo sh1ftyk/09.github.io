@@ -18,6 +18,11 @@ const theme = {
       controlHeightLG: 70,
       fontSizeLG: 14,
     },
+    Result: {
+      iconFontSize: 100,
+      titleFontSize: 32,
+      subtitleFontSize: 20,
+    },
   },
 }
 const App = () => {

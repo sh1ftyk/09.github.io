@@ -4,21 +4,26 @@ import { Layout, Flex, Button } from 'antd'
 
 import TicketService from '../../services/TicketService'
 import logo from '../../img/logo.svg'
-import { setTickets, setLoading } from '../../store/action'
+import { setTickets, setLoading, setServerError } from '../../store/action'
 import './Wrapper.scss'
 import Sort from '../Sort/Sort'
 import Tickets from '../Tickets/Tickets'
 
 import SiderDesign from './SiderDesign'
 import Loading from './Loading'
+import ServerError from './ServerError'
 
 const ticketService = new TicketService()
 
-const Wrapper = ({ setTicketsAction, setLoadingAction, loading }) => {
+const Wrapper = ({ setTicketsAction, setLoadingAction, setServerErrorAction, loading, serverError, nothingFound }) => {
   const getTickets = async () => {
+    setServerErrorAction(false)
     setLoadingAction(true)
     const res = await ticketService.getTickets()
     setLoadingAction(false)
+    if (res.tickets.length === 0) {
+      setServerErrorAction(true)
+    }
     setTicketsAction(res?.tickets.slice(0, 50))
   }
 
@@ -28,30 +33,40 @@ const Wrapper = ({ setTicketsAction, setLoadingAction, loading }) => {
 
   return (
     <>
-      <div className="logo">
-        <img src={logo} />
-      </div>
-      <Flex className="wrapper" gap="middle" wrap="wrap">
-        <Layout className="layout" hasSider>
-          <SiderDesign />
-          <Layout style={{ width: 'auto' }}>
-            <Sort />
-            {loading && <Loading />}
-            <Tickets />
-            {!loading && (
-              <Button className="button" size="large" type="primary">
-                ПОКАЗАТЬ ЕЩЁ 5 БИЛЕТОВ!
-              </Button>
-            )}
-          </Layout>
-        </Layout>
-      </Flex>
+      {serverError ? (
+        <ServerError getTickets={getTickets} />
+      ) : (
+        <>
+          <div className="logo">
+            <img src={logo} />
+          </div>
+          <Flex className="wrapper" gap="middle" wrap="wrap">
+            <Layout className="layout" hasSider>
+              <SiderDesign />
+              <Layout style={{ width: 'auto' }}>
+                {!nothingFound && <Sort />}
+                {loading && <Loading />}
+                <Tickets />
+                {!loading && !nothingFound && (
+                  <Button className="button" size="large" type="primary">
+                    ПОКАЗАТЬ ЕЩЁ 5 БИЛЕТОВ!
+                  </Button>
+                )}
+              </Layout>
+            </Layout>
+          </Flex>
+        </>
+      )}
     </>
   )
 }
 
 const mapStateToProps = (state) => {
-  return { loading: state.loadingReducer }
+  return {
+    loading: state.loadingReducer,
+    serverError: state.serverErrorReducer,
+    nothingFound: state.nothingFoundReducer,
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {
@@ -61,6 +76,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     setLoadingAction: (value) => {
       dispatch(setLoading(value))
+    },
+    setServerErrorAction: (value) => {
+      dispatch(setServerError(value))
     },
   }
 }

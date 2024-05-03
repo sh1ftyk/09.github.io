@@ -1,36 +1,36 @@
 export default class TicketService {
   baseUrl = 'https://aviasales-test-api.kata.academy'
 
-  async getData(url) {
-    try {
-      const res = await fetch(url)
-      const resJson = await res.json()
-      if (resJson.tickets || resJson.stop) {
-        return { stop: resJson.stop, tickets: resJson.tickets, error: false }
-      }
-      return resJson
-    } catch (err) {
-      console.log('Trouble with fetch: ', err.message)
-      sessionStorage.removeItem('searchId')
-      await this.getSearchId()
-    }
+  getData(url) {
+    return fetch(url)
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.tickets || res.stop) return { stop: res.stop, tickets: res.tickets, error: false }
+      })
+      .catch(() => {
+        return { stop: false, tickets: [], error: true }
+      })
   }
 
-  async getSearchId() {
+  getSearchId() {
     const searchId = sessionStorage.getItem('searchId')
     if (searchId) {
       return searchId
     }
-    const url = `${this.baseUrl}/search`
-    const body = await this.getData(url)
-    sessionStorage.setItem('searchId', body.searchId)
-    return body.searchId
+    return fetch(`${this.baseUrl}/search`)
+      .then((res) => res.json())
+      .then(({ searchId }) => {
+        sessionStorage.setItem('searchId', searchId)
+        return searchId
+      })
   }
 
   async getTickets() {
     const searchId = await this.getSearchId()
-    const url = `${this.baseUrl}/tickets?searchId=${searchId}`
-    const body = await this.getData(url)
-    return body
+    let url = `${this.baseUrl}/tickets?searchId=${searchId}`
+    const res = await this.getData(url)
+    if (res.stop) sessionStorage.removeItem('searchId')
+
+    return res
   }
 }

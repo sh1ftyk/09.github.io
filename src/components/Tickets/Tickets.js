@@ -1,12 +1,21 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 
 import CardDesign from '../UI/CardDesign'
+import { setNothingFound } from '../../store/action'
 import { tabNames, defaultCheckedList as filterNames } from '../../store/reducer'
-
 import './Tickets.scss'
+import NothingFound from '../UI/NothingFound'
 
-const Tickets = ({ tickets = [], actionTab, actionFilter = [] }) => {
+const Tickets = ({
+  tickets = [],
+  actionTab,
+  actionFilter = [],
+  loading,
+  setNothingFoundAction = () => {},
+  nothingFound,
+}) => {
+  console.log(actionFilter)
   const newTicketsArr = [...tickets]
 
   const getCheapest = () => newTicketsArr.sort((a, b) => a.price - b.price)
@@ -47,8 +56,22 @@ const Tickets = ({ tickets = [], actionTab, actionFilter = [] }) => {
     [tabNames[1]]: getFastest,
     [tabNames[2]]: getOptimal,
   }
-  console.log(TICKETS)
-  return filterTickets(TICKETS[actionTab]()).map((ticket) => (
+
+  const ticketsRender = filterTickets(TICKETS[actionTab]())
+
+  useEffect(() => {
+    if (!loading && ticketsRender.length === 0) {
+      setNothingFoundAction(true)
+    } else {
+      setNothingFoundAction(false)
+    }
+  }, [ticketsRender.length, loading])
+  console.log(nothingFound)
+  if (nothingFound) {
+    return <NothingFound />
+  }
+
+  return ticketsRender.map((ticket) => (
     <CardDesign {...ticket} key={ticket.price + ticket.carrier + ticket.segments[0].date} />
   ))
 }
@@ -58,7 +81,17 @@ const mapStateToProps = (state) => {
     tickets: state.ticketsReducer.tickets,
     actionTab: state.tabReducer.actionTab,
     actionFilter: state.filterReducer.actionFilter,
+    loading: state.loadingReducer,
+    nothingFound: state.nothingFoundReducer,
   }
 }
 
-export default connect(mapStateToProps)(Tickets)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setNothingFoundAction: (value) => {
+      dispatch(setNothingFound(value))
+    },
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Tickets)

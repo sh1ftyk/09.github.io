@@ -2,23 +2,22 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Checkbox } from 'antd'
 
+import { defaultCheckedList } from '../../store/reducer'
 import { setCheckAll, setCheckOne } from '../../store/action'
 import './Filter.scss'
 
 const CheckboxGroup = Checkbox.Group
 
-const flightOptions = ['Без пересадок', '1 пересадка', '2 пересадки', '3 пересадки']
-
 const Filters = ({ setCheckAllAction, setCheckOneAction, actionFilter }) => {
-  const checkAll = flightOptions.length === actionFilter.length
-  const indeterminate = actionFilter.length > 0 && actionFilter.length < flightOptions.length
+  const checkAll = defaultCheckedList.length === actionFilter.length
+  const indeterminate = actionFilter.length > 0 && actionFilter.length < defaultCheckedList.length
 
   const filtersChange = (value) => {
-    console.log(value)
     setCheckOneAction(value)
   }
+
   const checkAllFilters = (e) => {
-    setCheckAllAction(e.target.checked ? flightOptions : [])
+    setCheckAllAction(e.target.checked ? defaultCheckedList : [])
   }
   return (
     <>
@@ -27,7 +26,7 @@ const Filters = ({ setCheckAllAction, setCheckOneAction, actionFilter }) => {
       </Checkbox>
       <CheckboxGroup
         className="check-box-group"
-        options={flightOptions}
+        options={defaultCheckedList}
         value={actionFilter}
         onChange={filtersChange}
       />

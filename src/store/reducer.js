@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 import { combineReducers } from 'redux'
 
-import { SET_TAB, SET_TICKETS, CHECK_ALL, CHECK_ONE, LOADING_TICKETS } from './action'
+import { SET_TAB, SET_TICKETS, CHECK_ALL, CHECK_ONE, LOADING_TICKETS, SERVER_ERROR, NOTHING_FOUND } from './action'
 
 export const tabNames = ['CАМЫЙ ДЕШЁВЫЙ', 'САМЫЙ БЫСТРЫЙ', 'ОПТИМАЛЬНЫЙ']
 export const defaultCheckedList = ['Без пересадок', '1 пересадка', '2 пересадки', '3 пересадки']
@@ -47,9 +47,29 @@ const loadingReducer = (state = false, action) => {
   }
 }
 
+const serverErrorReducer = (state = false, action) => {
+  switch (action.type) {
+    case SERVER_ERROR:
+      return action.value
+    default:
+      return state
+  }
+}
+
+const nothingFoundReducer = (state = false, action) => {
+  switch (action.type) {
+    case NOTHING_FOUND:
+      return action.value
+    default:
+      return state
+  }
+}
+
 export default combineReducers({
   ticketsReducer,
   tabReducer,
   filterReducer,
   loadingReducer,
+  serverErrorReducer,
+  nothingFoundReducer,
 })
