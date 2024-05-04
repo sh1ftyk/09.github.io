@@ -1,5 +1,5 @@
 .second-row, .third-row {
-    padding: 0 2em 1em;
+    padding: 0 1em 1em 2em;
     line-height: 18px;
     text-align: left;
     color: gray;
@@ -14,34 +14,50 @@
     color: black;
 }
 
-@media (max-width: 575.5px) {
+@media (max-width: 767.5px) {
     .second-row, .third-row {
-        padding: 0 1em 1em;
-        line-height: 14px;
+        padding: 0 1.5em 1em;
+        line-height: 18px;
         text-align: left;
         color: gray;
     }
     .second-row__first-col, .third-row__first-col {
-        font-size: 14px;
+        font-size: 20px;
     }
     .second-row__second-col, .third-row__second-col {
-        font-size: 16px;
+        font-size: 18px;
+        color: black;
+    }
+}
+
+@media (max-width: 575.5px) {
+    .second-row, .third-row {
+        padding: 0 1em 1em;
+        line-height: 18px;
+        text-align: left;
+        color: gray;
+    }
+    .second-row__first-col, .third-row__first-col {
+        font-size: 18px;
+    }
+    .second-row__second-col, .third-row__second-col {
+        font-size: 17px;
         color: black;
     }
 }
 
 @media (max-width: 455px) {
     .second-row, .third-row {
-        padding: 0 1em .5em;
-        line-height: 10px;
+        padding: 0 1em 1em;
         text-align: left;
+        line-height: 16px;
         color: gray;
     }
     .second-row__first-col, .third-row__first-col {
-        font-size: 12px;
+        font-size: 15px;
     }
     .second-row__second-col, .third-row__second-col {
-        font-size: 14px;
+        font-size: 16px;
         color: black;
     }
 }

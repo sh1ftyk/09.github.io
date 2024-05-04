@@ -3,7 +3,7 @@ import { combineReducers } from 'redux'
 
 import { SET_TAB, SET_TICKETS, CHECK_ALL, CHECK_ONE, LOADING_TICKETS, SERVER_ERROR, NOTHING_FOUND } from './action'
 
-export const tabNames = ['CАМЫЙ ДЕШЁВЫЙ', 'САМЫЙ БЫСТРЫЙ', 'ОПТИМАЛЬНЫЙ']
+export const tabNames = ['ДЕШЁВЫЙ', 'БЫСТРЫЙ', 'ОПТИМАЛЬНЫЙ']
 export const defaultCheckedList = ['Без пересадок', '1 пересадка', '2 пересадки', '3 пересадки']
 
 const initialTabState = { actionTab: tabNames[0] }

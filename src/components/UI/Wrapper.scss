@@ -13,7 +13,7 @@
 .sider {
     max-height: 22em;
     margin-right: 2em;
-    padding: 1.7em 1.5em;
+    padding: 1.7em 0.5em 1.7em 1.5em;
     color: black;
     background-color: white !important;
     box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
@@ -55,7 +55,7 @@
 @media (max-width: 767.5px) {
     .layout {
         flex-direction: column !important;
-        padding: 2em;
+        padding: 1.5em;
     }
     .sider {
         flex: 0 0 100% !important;
@@ -64,19 +64,31 @@
         width: 100% !important;
         margin-bottom: 2em !important;
     }
-
-    
-}
-
-@media (max-width: 575.5px) {
     .ant-segmented-item-label {
-        font-size: 12px !important;
+        font-size: 16px !important;
+    }
+    .sider__description {
+        font-size: 20px;
     }
 }
 
-@media (max-width: 455px) {
+@media (max-width: 575.5px) {
+    .layout {
+        padding: 1em;
+    }
     .ant-segmented-item-label {
-        font-size: 8px !important;
+        font-size: 14px !important;
+    }
+}
+
+@media (max-width: 464px) {
+    .layout {
+        padding: 0.5em;
+    }
+
+    .ant-segmented-item-label {
+        padding: 0 !important;
+        font-size: 12px !important;
     }
 }
 
