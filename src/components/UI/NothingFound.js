@@ -4,9 +4,9 @@ import { ConfigProvider, Result, Button } from 'antd'
 import { MehOutlined, FilterFilled } from '@ant-design/icons'
 
 import './NothingFound.scss'
-import { filterReducer, defaultCheckedList } from '../../store/reducer'
+import { tabReducer, tabNames, filterReducer, defaultCheckedList } from '../../store/reducer'
 
-const NothingFound = ({ filterReducer }) => {
+const NothingFound = ({ tabReducer, filterReducer }) => {
   return (
     <ConfigProvider
       theme={{
@@ -30,7 +30,10 @@ const NothingFound = ({ filterReducer }) => {
               size="large"
               key="warning"
               icon={<FilterFilled />}
-              onClick={() => filterReducer(defaultCheckedList)}
+              onClick={() => {
+                filterReducer(defaultCheckedList)
+                tabReducer(tabNames[0])
+              }}
             >
               Сбросить фильтры
             </Button>
@@ -41,4 +44,4 @@ const NothingFound = ({ filterReducer }) => {
   )
 }
 
-export default connect(null, { filterReducer })(NothingFound)
+export default connect(null, { tabReducer, filterReducer })(NothingFound)

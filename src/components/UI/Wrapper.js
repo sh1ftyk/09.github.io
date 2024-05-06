@@ -39,7 +39,7 @@ const Wrapper = ({
   return (
     <>
       {actionError ? (
-        <ServerError getTickets={getTickets} />
+        <ServerError getTickets={fetchTickets} />
       ) : (
         <>
           <div className="logo">
