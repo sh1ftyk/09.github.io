@@ -2,22 +2,13 @@ import React from 'react'
 import { Segmented } from 'antd'
 import { connect } from 'react-redux'
 
-import { setTab } from '../../store/action'
-import { tabNames } from '../../store/reducer'
+import { tabReducer, tabNames } from '../../store/reducer'
 
-const Sort = ({ setTabAction }) => {
+const Sort = ({ tabReducer }) => {
   const changeTab = (value) => {
-    setTabAction(value)
+    tabReducer(value)
   }
   return <Segmented className="segmented" size="large" options={tabNames} onChange={changeTab} block />
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setTabAction: (value) => {
-      dispatch(setTab(value))
-    },
-  }
-}
-
-export default connect(null, mapDispatchToProps)(Sort)
+export default connect(null, { tabReducer })(Sort)

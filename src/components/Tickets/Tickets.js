@@ -2,20 +2,11 @@ import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 
 import CardDesign from '../UI/CardDesign'
-import { setNothingFound } from '../../store/action'
-import { tabNames, defaultCheckedList as filterNames } from '../../store/reducer'
+import { tabNames, defaultCheckedList as filterNames, nothingFoundReducer } from '../../store/reducer'
 import './Tickets.scss'
 import NothingFound from '../UI/NothingFound'
 
-const Tickets = ({
-  tickets = [],
-  actionTab,
-  actionFilter = [],
-  loading,
-  setNothingFoundAction = () => {},
-  nothingFound,
-}) => {
-  console.log(actionFilter)
+const Tickets = ({ tickets, nothingFoundReducer, actionTab, actionFilter, actionLoading, actionNothingFound }) => {
   const newTicketsArr = [...tickets]
 
   const getCheapest = () => newTicketsArr.sort((a, b) => a.price - b.price)
@@ -60,14 +51,14 @@ const Tickets = ({
   const ticketsRender = filterTickets(TICKETS[actionTab]())
 
   useEffect(() => {
-    if (!loading && ticketsRender.length === 0) {
-      setNothingFoundAction(true)
+    if (!actionLoading && ticketsRender.length === 0) {
+      nothingFoundReducer(true)
     } else {
-      setNothingFoundAction(false)
+      nothingFoundReducer(false)
     }
-  }, [ticketsRender.length, loading])
-  console.log(nothingFound)
-  if (nothingFound) {
+  }, [ticketsRender.length, actionLoading])
+
+  if (actionNothingFound) {
     return <NothingFound />
   }
 
@@ -78,20 +69,12 @@ const Tickets = ({
 
 const mapStateToProps = (state) => {
   return {
-    tickets: state.ticketsReducer.tickets,
-    actionTab: state.tabReducer.actionTab,
-    actionFilter: state.filterReducer.actionFilter,
-    loading: state.loadingReducer,
-    nothingFound: state.nothingFoundReducer,
+    tickets: state.tickets,
+    actionTab: state.actionTab,
+    actionFilter: state.actionFilter,
+    actionLoading: state.actionLoading,
+    actionNothingFound: state.actionNothingFound,
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setNothingFoundAction: (value) => {
-      dispatch(setNothingFound(value))
-    },
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Tickets)
+export default connect(mapStateToProps, { nothingFoundReducer })(Tickets)

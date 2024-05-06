@@ -1,6 +1,12 @@
 /* eslint-disable indent */
-import { createStore } from 'redux'
+import { configureStore } from '@reduxjs/toolkit'
 
-import reducer from './reducer'
+import rootReducers from './reducer'
+export const store = configureStore({ reducer: rootReducers })
+// import { createStore } from 'redux'
 
-export const store = createStore(reducer)
+// import combineReducers from './reducer'
+
+// export const store = createStore(combineReducers)
+
+export default store

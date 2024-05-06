@@ -2,22 +2,21 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Checkbox } from 'antd'
 
-import { defaultCheckedList } from '../../store/reducer'
-import { setCheckAll, setCheckOne } from '../../store/action'
+import { filterReducer, defaultCheckedList } from '../../store/reducer'
 import './Filter.scss'
 
 const CheckboxGroup = Checkbox.Group
 
-const Filters = ({ setCheckAllAction, setCheckOneAction, actionFilter }) => {
+const Filters = ({ filterReducer, actionFilter }) => {
   const checkAll = defaultCheckedList.length === actionFilter.length
   const indeterminate = actionFilter.length > 0 && actionFilter.length < defaultCheckedList.length
 
   const filtersChange = (value) => {
-    setCheckOneAction(value)
+    filterReducer(value)
   }
 
   const checkAllFilters = (e) => {
-    setCheckAllAction(e.target.checked ? defaultCheckedList : [])
+    filterReducer(e.target.checked ? defaultCheckedList : [])
   }
   return (
     <>
@@ -34,18 +33,7 @@ const Filters = ({ setCheckAllAction, setCheckOneAction, actionFilter }) => {
   )
 }
 const mapStateToProps = (state) => {
-  return { actionFilter: state.filterReducer.actionFilter }
+  return { actionFilter: state.actionFilter }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setCheckAllAction: (value) => {
-      dispatch(setCheckAll(value))
-    },
-    setCheckOneAction: (value) => {
-      dispatch(setCheckOne(value))
-    },
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Filters)
+export default connect(mapStateToProps, { filterReducer })(Filters)

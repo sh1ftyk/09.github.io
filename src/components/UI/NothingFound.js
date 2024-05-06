@@ -4,10 +4,9 @@ import { ConfigProvider, Result, Button } from 'antd'
 import { MehOutlined, FilterFilled } from '@ant-design/icons'
 
 import './NothingFound.scss'
-import { setCheckAll } from '../../store/action'
-import { defaultCheckedList } from '../../store/reducer'
+import { filterReducer, defaultCheckedList } from '../../store/reducer'
 
-const NothingFound = ({ setCheckAllAction }) => {
+const NothingFound = ({ filterReducer }) => {
   return (
     <ConfigProvider
       theme={{
@@ -31,7 +30,7 @@ const NothingFound = ({ setCheckAllAction }) => {
               size="large"
               key="warning"
               icon={<FilterFilled />}
-              onClick={() => setCheckAllAction(defaultCheckedList)}
+              onClick={() => filterReducer(defaultCheckedList)}
             >
               Сбросить фильтры
             </Button>
@@ -42,12 +41,4 @@ const NothingFound = ({ setCheckAllAction }) => {
   )
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setCheckAllAction: (value) => {
-      dispatch(setCheckAll(value))
-    },
-  }
-}
-
-export default connect(null, mapDispatchToProps)(NothingFound)
+export default connect(null, { filterReducer })(NothingFound)

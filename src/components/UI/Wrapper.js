@@ -2,9 +2,9 @@ import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { Layout, Flex, Button } from 'antd'
 
-import TicketService from '../../services/TicketService'
 import logo from '../../img/logo.svg'
-import { setTickets, setLoading, setServerError } from '../../store/action'
+import { getTickets } from '../../services/TicketService'
+import { ticketsReducer, loadingReducer, serverErrorReducer } from '../../store/reducer'
 import './Wrapper.scss'
 import Sort from '../Sort/Sort'
 import Tickets from '../Tickets/Tickets'
@@ -13,27 +13,32 @@ import SiderDesign from './SiderDesign'
 import Loading from './Loading'
 import ServerError from './ServerError'
 
-const ticketService = new TicketService()
-
-const Wrapper = ({ setTicketsAction, setLoadingAction, setServerErrorAction, loading, serverError, nothingFound }) => {
-  const getTickets = async () => {
-    setServerErrorAction(false)
-    setLoadingAction(true)
-    const res = await ticketService.getTickets()
-    setLoadingAction(false)
+const Wrapper = ({
+  ticketsReducer,
+  loadingReducer,
+  serverErrorReducer,
+  actionLoading,
+  actionError,
+  actionNothingFound,
+}) => {
+  const fetchTickets = async () => {
+    serverErrorReducer(false)
+    loadingReducer(true)
+    const res = await getTickets()
+    loadingReducer(false)
     if (res.tickets.length === 0) {
-      setServerErrorAction(true)
+      serverErrorReducer(true)
     }
-    setTicketsAction(res?.tickets.slice(0, 50))
+    ticketsReducer(res?.tickets.slice(0, 50))
   }
 
   useEffect(() => {
-    getTickets()
+    fetchTickets()
   }, [])
 
   return (
     <>
-      {serverError ? (
+      {actionError ? (
         <ServerError getTickets={getTickets} />
       ) : (
         <>
@@ -44,10 +49,10 @@ const Wrapper = ({ setTicketsAction, setLoadingAction, setServerErrorAction, loa
             <Layout className="layout" hasSider>
               <SiderDesign />
               <Layout style={{ width: 'auto' }}>
-                {!nothingFound && <Sort />}
-                {loading && <Loading />}
+                {!actionNothingFound && <Sort />}
+                {actionLoading && <Loading />}
                 <Tickets />
-                {!loading && !nothingFound && (
+                {!actionLoading && !actionNothingFound && (
                   <Button className="button" size="large" type="primary">
                     ПОКАЗАТЬ ЕЩЁ 5 БИЛЕТОВ!
                   </Button>
@@ -63,24 +68,10 @@ const Wrapper = ({ setTicketsAction, setLoadingAction, setServerErrorAction, loa
 
 const mapStateToProps = (state) => {
   return {
-    loading: state.loadingReducer,
-    serverError: state.serverErrorReducer,
-    nothingFound: state.nothingFoundReducer,
+    actionLoading: state.actionLoading,
+    actionError: state.actionError,
+    actionNothingFound: state.actionNothingFound,
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setTicketsAction: (value) => {
-      dispatch(setTickets(value))
-    },
-    setLoadingAction: (value) => {
-      dispatch(setLoading(value))
-    },
-    setServerErrorAction: (value) => {
-      dispatch(setServerError(value))
-    },
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Wrapper)
+export default connect(mapStateToProps, { ticketsReducer, loadingReducer, serverErrorReducer })(Wrapper)
