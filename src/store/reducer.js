@@ -1,82 +1,6 @@
-// /* eslint-disable indent */
-// import { combineReducers } from 'redux'
-
-// import { SET_TAB, SET_TICKETS, CHECK_ALL, CHECK_ONE, LOADING_TICKETS, SERVER_ERROR, NOTHING_FOUND } from './action'
-
-// export const tabNames = ['ДЕШЁВЫЙ', 'БЫСТРЫЙ', 'ОПТИМАЛЬНЫЙ']
-// export const defaultCheckedList = ['Без пересадок', '1 пересадка', '2 пересадки', '3 пересадки']
-
-// const initialTabState = { actionTab: tabNames[0] }
-// const initialFilterState = { actionFilter: defaultCheckedList }
-
-// const ticketsReducer = (state = { tickets: [] }, action) => {
-//   switch (action.type) {
-//     case SET_TICKETS:
-//       return { ...state, tickets: action.value }
-//     default:
-//       return state
-//   }
-// }
-
-// const tabReducer = (state = initialTabState, action) => {
-//   switch (action.type) {
-//     case SET_TAB:
-//       return { ...state, actionTab: action.value }
-//     default:
-//       return state
-//   }
-// }
-
-// const filterReducer = (state = initialFilterState, action) => {
-//   switch (action.type) {
-//     case CHECK_ALL:
-//       return { ...state, actionFilter: action.value }
-//     case CHECK_ONE:
-//       return { ...state, actionFilter: action.value }
-//     default:
-//       return state
-//   }
-// }
-
-// const loadingReducer = (state = false, action) => {
-//   switch (action.type) {
-//     case LOADING_TICKETS:
-//       return action.value
-//     default:
-//       return state
-//   }
-// }
-
-// const serverErrorReducer = (state = false, action) => {
-//   switch (action.type) {
-//     case SERVER_ERROR:
-//       return action.value
-//     default:
-//       return state
-//   }
-// }
-
-// const nothingFoundReducer = (state = false, action) => {
-//   switch (action.type) {
-//     case NOTHING_FOUND:
-//       return action.value
-//     default:
-//       return state
-//   }
-// }
-
-// export default combineReducers({
-//   ticketsReducer,
-//   tabReducer,
-//   filterReducer,
-//   loadingReducer,
-//   serverErrorReducer,
-//   nothingFoundReducer,
-// })
-
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
-import { getTickets } from '../services/TicketService'
+import getTickets from '../services/TicketService'
 
 export const tabNames = ['ДЕШЁВЫЙ', 'БЫСТРЫЙ', 'ОПТИМАЛЬНЫЙ']
 export const defaultCheckedList = ['Без пересадок', '1 пересадка', '2 пересадки', '3 пересадки']
@@ -85,10 +9,10 @@ const initialState = {
   tickets: [],
   actionTab: tabNames[0],
   actionFilter: defaultCheckedList,
-  actionLoading: false,
+  actionLoading: true,
   actionError: 0,
   actionNothingFound: false,
-  actionShowTickets: 5,
+  actionTicketsCounter: 5,
 }
 
 const rootReducers = createSlice({
@@ -96,7 +20,7 @@ const rootReducers = createSlice({
   initialState,
   reducers: {
     ticketsReducer(state, action) {
-      return { ...state, tickets: action.payload }
+      return { ...state, tickets: [...state.tickets, ...action.payload.tickets], stop: action.payload.stop }
     },
     tabReducer(state, action) {
       return { ...state, actionTab: action.payload }
@@ -111,25 +35,15 @@ const rootReducers = createSlice({
     },
 
     serverErrorReducer(state, action) {
-      return { ...state, actionError: action.payload }
+      return { ...state, actionError: action.payload + state.actionError }
     },
 
     nothingFoundReducer(state, action) {
       return { ...state, actionNothingFound: action.payload }
     },
 
-    showTicketsReducer(state) {
-      return { ...state, actionShowTickets: state.actionShowTickets + 5 }
-    },
-
-    addTicketsReducer(state, action) {
-      const { stop: actionStop, error, tickets } = action.payload
-      return {
-        ...state,
-        actionLoading: actionStop,
-        actionError: error ? state.actionError + 1 : state.actionError,
-        tickets: [...state.tickets, ...tickets],
-      }
+    ticketsCounterReducer(state, action) {
+      return { ...state, actionTicketsCounter: action.payload + state.actionTicketsCounter }
     },
   },
 })
@@ -141,18 +55,24 @@ export const {
   loadingReducer,
   serverErrorReducer,
   nothingFoundReducer,
-  showTicketsReducer,
-  addTicketsReducer,
+  ticketsCounterReducer,
 } = rootReducers.actions
 
-export const fetchTickets = createAsyncThunk('TicketService/getData', async (pl, api) => {
+export const fetchTickets = createAsyncThunk('aviasales/fetchTickets', async (pl, api) => {
   const loop = async () => {
     let part = await getTickets()
-    api.dispatch(addTicketsReducer(part))
+    api.dispatch(ticketsReducer(part))
+    if (part.error) {
+      api.dispatch(serverErrorReducer(1))
+    }
+
     if (!part.stop) {
       loop()
+    } else {
+      api.dispatch(loadingReducer(false))
     }
   }
   await loop()
 })
+
 export default rootReducers.reducer

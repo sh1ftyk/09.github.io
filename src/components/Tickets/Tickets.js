@@ -6,7 +6,15 @@ import { tabNames, defaultCheckedList as filterNames, nothingFoundReducer } from
 import './Tickets.scss'
 import NothingFound from '../UI/NothingFound'
 
-const Tickets = ({ tickets, nothingFoundReducer, actionTab, actionFilter, actionLoading, actionNothingFound }) => {
+const Tickets = ({
+  tickets,
+  nothingFoundReducer,
+  actionTab,
+  actionFilter,
+  actionLoading,
+  actionNothingFound,
+  actionTicketsCounter,
+}) => {
   const newTicketsArr = [...tickets]
 
   const getCheapest = () => newTicketsArr.sort((a, b) => a.price - b.price)
@@ -48,7 +56,7 @@ const Tickets = ({ tickets, nothingFoundReducer, actionTab, actionFilter, action
     [tabNames[2]]: getOptimal,
   }
 
-  const ticketsRender = filterTickets(TICKETS[actionTab]())
+  const ticketsRender = filterTickets(TICKETS[actionTab]()).slice(0, actionTicketsCounter)
 
   useEffect(() => {
     if (!actionLoading && ticketsRender.length === 0) {
@@ -74,6 +82,7 @@ const mapStateToProps = (state) => {
     actionFilter: state.actionFilter,
     actionLoading: state.actionLoading,
     actionNothingFound: state.actionNothingFound,
+    actionTicketsCounter: state.actionTicketsCounter,
   }
 }
 

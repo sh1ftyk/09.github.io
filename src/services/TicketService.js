@@ -4,7 +4,9 @@ const getData = (url) => {
   return fetch(url)
     .then((res) => res.json())
     .then((res) => {
-      if (res.tickets || res.stop) return { stop: res.stop, tickets: res.tickets, error: false }
+      if (res.tickets || res.stop) {
+        return { stop: res.stop, tickets: res.tickets, error: false }
+      }
     })
     .catch(() => {
       return { stop: false, tickets: [], error: true }
@@ -24,7 +26,7 @@ const getSearchId = () => {
     })
 }
 
-export const getTickets = async () => {
+const getTickets = async () => {
   const searchId = await getSearchId()
   let url = `${baseUrl}/tickets?searchId=${searchId}`
   const res = await getData(url)
@@ -34,3 +36,5 @@ export const getTickets = async () => {
   }
   return res
 }
+
+export default getTickets
