@@ -25,7 +25,9 @@ const Wrapper = ({ fetchTickets, actionLoading, actionError, actionNothingFound,
   ) : (
     <>
       <div className="logo">
-        <img src={logo} />
+        <button className="button-refresh" onClick={() => location.reload()}>
+          <img src={logo} />
+        </button>
       </div>
       <Flex className="wrapper" gap="middle" wrap="wrap">
         <Layout className="layout" hasSider>
